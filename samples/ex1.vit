@@ -1,0 +1,13 @@
+program main;
+begin
+    integer a, b, c;
+    a ::= 10;
+    b ::= 20;
+    c ::= a + b;
+    write ( a, b, c);
+    if (a > b) then begin
+        a ::= b;   
+    end else begin
+        b ::= a;
+    end
+end
