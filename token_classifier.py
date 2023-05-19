@@ -53,6 +53,7 @@ class TokenClassifier:
         self.tokenIdToStr[Token.LogicAnd] = "LogicAnd"
         self.tokenIdToStr[Token.LogicOr] = "LogicOr"
         self.tokenIdToStr[Token.LogicNot] = "LogicNot"
+        self.tokenIdToStr[Token.ReservedDoBegin] = "ReservedDoBegin"
 	
     def getToken(self, token):
         return self.tokenIdToStr[token]
@@ -79,6 +80,7 @@ class TokenClassifier:
             "then": Token.ReservedThen,
             "begin": Token.ReservedBegin,
             "end": Token.ReservedEnd,
+            "do": Token.ReservedDoBegin,
             "+": Token.OperationSum,
 			"-": Token.OperationSub,
 			"/": Token.OperationDiv,
