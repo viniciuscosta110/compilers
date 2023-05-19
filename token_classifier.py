@@ -1,5 +1,5 @@
 #include <unordered_map>
-from token import Token
+from tokenTypes import Token
 
 class TokenClassifier:
     tokenIdToStr = {}
@@ -32,7 +32,7 @@ class TokenClassifier:
         self.tokenIdToStr[Token.ReservedWrite] = "ReservedWrite"
         self.tokenIdToStr[Token.ReservedRead] = "ReservedRead"
         self.tokenIdToStr[Token.SignalComma] = "SignalComma"
-        self.tokenIdToStr[Token.OperationSum] = "OperationAdd"
+        self.tokenIdToStr[Token.OperationSum] = "OperationSum"
         self.tokenIdToStr[Token.OperationSub] = "OperationSub"
         self.tokenIdToStr[Token.OperationMult] = "OperationMult"
         self.tokenIdToStr[Token.OperationDiv] = "OperationDiv"
@@ -44,8 +44,8 @@ class TokenClassifier:
         self.tokenIdToStr[Token.RelationLower] = "RelationLower"
         self.tokenIdToStr[Token.RelationGreaterEqual] = "RelationGreaterEqual"
         self.tokenIdToStr[Token.RelationLowerEqual] = "RelationLowerEqual"
-        self.tokenIdToStr[Token.DoubleConst] = "RealConst"
-        self.tokenIdToStr[Token.IntConst] = "IntegerConst"
+        self.tokenIdToStr[Token.DoubleConst] = "DoubleConst"
+        self.tokenIdToStr[Token.IntegerConst] = "IntegerConst"
         self.tokenIdToStr[Token.SignalDot] = "SignalDot"
         self.tokenIdToStr[Token.Unknown] = "Unknown"
         self.tokenIdToStr[Token.SignalSemiComma] = "SignalSemiComma"
@@ -111,7 +111,7 @@ class TokenClassifier:
         if token.isdigit():
             token = int(token)
         if type(token) == int:
-            return Token.IntConst
+            return Token.IntegerConst
         elif type(token) == float:
             return Token.RealConst
         

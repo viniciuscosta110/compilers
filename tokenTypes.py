@@ -56,4 +56,5 @@ class Token():
     SignalAtribution = 55,
     EndLine = 56,
     Unknown = 57,
-    qtdTokens = 58
+    qtdTokens = 58,
+    IntegerConst = 59,
