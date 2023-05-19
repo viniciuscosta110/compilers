@@ -6,7 +6,7 @@ begin
     c ::= a + b;
     write ( a, b, c);
     if (a > b) then begin
-        a ::= b;   
+        a ::= b;
     end else begin
         b ::= a;
     end
