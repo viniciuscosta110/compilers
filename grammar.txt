@@ -1,6 +1,6 @@
 <programa> ::= program <id>; <corpo>
 <corpo> ::= <declara> <rotina> begin <sentencas> end
-<declara> ::= var <dvar> <mais_dc> | <empty>
+<declara> ::= var <dvar> <mais_dc> | <empty>
 <mais_dc> ::= ; <cont_dc>
 <cont_dc> ::= <dvar> <mais_dc> | <empty>
 <dvar> ::= <variaveis> : <tipo_var>

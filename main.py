@@ -24,6 +24,11 @@ def main():
                 word = ''
                 continue
             if len(word) > 0:
+                if(word[-1] == ':'):
+                    words.append(word[:-1])
+                    words.append(':')
+                    word = ''
+                    continue
                 words.append(word)
                 word = ''
                 continue
@@ -31,7 +36,12 @@ def main():
                 words.append(c)
                 word = ''
                 continue
-        elif c == '(' or c == ')' or c == '[' or c == ']' or c == '{' or c == '}' or c == ',' or c == ';':
+        elif (
+            c == '(' or c == ')' or c == '[' or c == ']' or c == '{' or c == '}' or
+            c == ',' or c == ';' or c == '::=' or c == '.' or c == '+' or c == '-' or
+            c == '*' or c == '/' or c == '%' or c == '<' or c == '>' or c == '!' or 
+            c == '&' or c == '|' or c == '?' or c == '!' or c == '`' or c == '"' or c == "'"
+        ):
             if len(word) > 0:
                 words.append(word)
                 word = ''
@@ -42,7 +52,7 @@ def main():
                 continue
         
         word = word + c
-    
+
     tokenClass = TokenClassifier()
     tokens = Token()
     tokenTable = []
@@ -52,6 +62,7 @@ def main():
             continue
         if(word[0] == ' '):
             word = word[1:]
+
         token = tokenClass.classify(word)
         word = word if word != '\n' else '\\n'
 
@@ -67,16 +78,18 @@ def main():
             if type(tokenNames[key]) == tuple:
                 tokenNames[key] = tokenNames[key][0]
     
-    #print token table
-    #for token in tokenTable:
-    #    print(token)
-    #print('\n\n')
-    #use Parser
+    # output the token table to lexer.txt
+    with open('outputs/lexer.txt', 'w') as f:
+        for token in tokenTable:
+            f.write(f'{token}\n')
+
     parser = Parser(tokenTable)
     parser.parse()
 
-    # print all nodes in the Abstract Syntax Tree (AST)
-    #print(parser.syntaxTree[0])
+    #output the syntax tree to syntax_tree.txt
+    with open('outputs/syntax_tree.txt', 'w') as f:
+        f.write(str(parser.syntaxTree))
+    
 
     # If there is no error in the syntax, these lines will be printed
     print("Seu programa não tem erros sintáticos.")
