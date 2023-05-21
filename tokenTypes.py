@@ -58,3 +58,5 @@ class Token():
     Unknown = 57,
     qtdTokens = 58,
     IntegerConst = 59,
+    ReservedQuantidade = 61,
+    ReservedElemento = 62,

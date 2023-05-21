@@ -58,14 +58,13 @@ def main():
     tokenTable = []
 
     for word in words:
-        if(word == ''):
+        if(word == '' or len(word) == 0) or word == ' ':
             continue
         if(word[0] == ' '):
             word = word[1:]
 
         token = tokenClass.classify(word)
         word = word if word != '\n' else '\\n'
-
         tokenTable.append((tokenClass.getToken(token), word))
 
     # print all tokens in Token class

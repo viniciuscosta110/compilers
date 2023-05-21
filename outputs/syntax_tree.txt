@@ -32,6 +32,7 @@ Program
                   EndLine
                 ReservedEnd
             ReservedEnd
+        EndLine
       Statement
         TypeInteger
           Identificator

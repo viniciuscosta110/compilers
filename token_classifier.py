@@ -54,6 +54,11 @@ class TokenClassifier:
         self.tokenIdToStr[Token.LogicOr] = "LogicOr"
         self.tokenIdToStr[Token.LogicNot] = "LogicNot"
         self.tokenIdToStr[Token.ReservedDoBegin] = "ReservedDoBegin"
+        self.tokenIdToStr[Token.ReservedInterception] = "ReservedInterception"
+        self.tokenIdToStr[Token.ResevedUnion] = "ResevedUnion"
+        self.tokenIdToStr[Token.ReservedPos] = "ReservedPos"
+        self.tokenIdToStr[Token.ReservedElemento] = "ReservedElemento"
+        self.tokenIdToStr[Token.ReservedQuantidade] = "ReservedQuantidade"
 	
     def getToken(self, token):
         return self.tokenIdToStr[token]
@@ -81,6 +86,9 @@ class TokenClassifier:
             "begin": Token.ReservedBegin,
             "end": Token.ReservedEnd,
             "do": Token.ReservedDoBegin,
+            "pos": Token.ReservedPos,
+            "elemento": Token.ReservedElemento,
+            "quantidade": Token.ReservedQuantidade,
             "+": Token.OperationSum,
 			"-": Token.OperationSub,
 			"/": Token.OperationDiv,
@@ -102,6 +110,8 @@ class TokenClassifier:
             "}": Token.CloseBrace,
             "[": Token.OpenBracket,
             "]": Token.CloseBracket,
+            "U": Token.ResevedUnion,
+            "∩": Token.ReservedInterception,
             "\n": Token.EndLine,
         }
 
@@ -116,7 +126,6 @@ class TokenClassifier:
             return Token.IntegerConst
         elif type(token) == float:
             return Token.RealConst
-        
         if token == tokenType:
             return Token.Identificator if not token[0].isdigit() and not self.haveSpecialCharacterAtFirstPositin(token[0]) else 'Caracter Inicial Inválido'
             
