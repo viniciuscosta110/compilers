@@ -47,7 +47,7 @@ class Token():
     CloseBrace = 46,
     OpenPar = 47,
     ClosePar = 48,
-    ResevedUnion = 49,
+    ReservedUnion = 49,
     ReservedInterception = 50,
     SignalDot = 51,
     SignalComma = 52,

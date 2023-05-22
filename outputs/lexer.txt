@@ -40,7 +40,7 @@
 ('EndLine', '\\n')
 ('ReservedEnd', 'end')
 ('ReservedEnd', 'end')
-('ResevedUnion', 'U')
+('ReservedInterception', 'n')
 ('OpenPar', '(')
 ('ReservedPos', 'pos')
 ('OpenPar', '(')

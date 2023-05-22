@@ -32,6 +32,39 @@ Program
                   EndLine
                 ReservedEnd
             ReservedEnd
+      Statement
+        ReservedInterception
+          OpenPar
+            ReservedPos
+              OpenPar
+                IntegerConst
+              ClosePar
+            SignalComma
+            ReservedElemento
+              OpenPar
+                OpenBrace
+                  OpenBracket
+                    IntegerConst
+                    SignalComma
+                    IntegerConst
+                    CloseBracket
+                CloseBrace
+                SignalComma
+                OpenBrace
+                  OpenBracket
+                    IntegerConst
+                    SignalComma
+                    IntegerConst
+                    SignalComma
+                    OpenBracket
+                      IntegerConst
+                      SignalComma
+                      IntegerConst
+                      CloseBracket
+                    CloseBracket
+                CloseBrace
+              ClosePar
+          ClosePar
         EndLine
       Statement
         TypeInteger

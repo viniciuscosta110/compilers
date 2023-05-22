@@ -55,7 +55,7 @@ class TokenClassifier:
         self.tokenIdToStr[Token.LogicNot] = "LogicNot"
         self.tokenIdToStr[Token.ReservedDoBegin] = "ReservedDoBegin"
         self.tokenIdToStr[Token.ReservedInterception] = "ReservedInterception"
-        self.tokenIdToStr[Token.ResevedUnion] = "ResevedUnion"
+        self.tokenIdToStr[Token.ReservedUnion] = "ReservedUnion"
         self.tokenIdToStr[Token.ReservedPos] = "ReservedPos"
         self.tokenIdToStr[Token.ReservedElemento] = "ReservedElemento"
         self.tokenIdToStr[Token.ReservedQuantidade] = "ReservedQuantidade"
@@ -110,12 +110,13 @@ class TokenClassifier:
             "}": Token.CloseBrace,
             "[": Token.OpenBracket,
             "]": Token.CloseBracket,
-            "U": Token.ResevedUnion,
-            "∩": Token.ReservedInterception,
+            "U": Token.ReservedUnion,
+            "n": Token.ReservedInterception,
             "\n": Token.EndLine,
         }
 
         tokenType = ''
+
         try:
             tokenType = reserved_words[token]
         except:

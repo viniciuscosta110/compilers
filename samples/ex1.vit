@@ -8,7 +8,7 @@ begin
             gcd ::= b;
         end
     end
-    U(pos(2), elemento({[1,2]}, {[3,4], [5,6]}));
+    n(pos(2), elemento({[1,2]}, {[3,4], [5,6]}));
     integer a, b, c;
     a ::= 10;
     b ::= 20;

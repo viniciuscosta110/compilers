@@ -206,6 +206,61 @@ class Parser:
             pfalsaReturn = self.pfalsa()
             if pfalsaReturn != None:
                 newRoot.children.append(pfalsaReturn)
+
+        #<expressao_bag> ::= <opBag1>(<conteudo> , <conteudo>) | pos(<integer_num>) | <opBag2>(<conteudo>)
+        #<conteudo> ::= {} | {[<integer_num>,<integer_num>]<conteudo_integer_cont>} | {[<real_num>,<integer_num>]<conteudo_real_cont>}
+        #<conteudo_integer_cont> ::= ,[<integer_num>,<integer_num>]<conteudo_integer_cont>|<empty>
+        #<conteudo_real_cont> ::= ,[<real_num>,<integer_num>]<conteudo_real_cont>|<empty>
+        #<opBag1> ::= U | ∩
+        #<opBag2> ::= elemento | quantidade
+        elif self.checkToken(self.tokenNames['ReservedUnion']):
+            newRoot = SyntaxTreeNode("ReservedUnion", [])
+            self.match(self.tokenNames['ReservedUnion'])
+
+            self.match(self.tokenNames['OpenPar'])
+            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
+
+            newRoot.children[0].children.append(self.conteudo())
+
+            self.match(self.tokenNames['SignalComma'])
+            newRoot.children[0].children.append(SyntaxTreeNode('SignalComma', []))
+
+            newRoot.children[0].children.append(self.conteudo())
+
+            self.match(self.tokenNames['ClosePar'])
+            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+            self.match(self.tokenNames['SignalSemiComma'])
+        elif self.checkToken(self.tokenNames['ReservedInterception']):
+            newRoot = SyntaxTreeNode("ReservedInterception", [])
+            self.match(self.tokenNames['ReservedInterception'])
+
+            self.match(self.tokenNames['OpenPar'])
+            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
+
+            newRoot.children[0].children.append(self.conteudo())
+
+            self.match(self.tokenNames['SignalComma'])
+            newRoot.children[0].children.append(SyntaxTreeNode('SignalComma', []))
+
+            newRoot.children[0].children.append(self.conteudo())
+            self.match(self.tokenNames['ClosePar'])
+            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+            self.match(self.tokenNames['SignalSemiComma'])
+        elif self.checkToken(self.tokenNames['ReservedElemento']):
+            self.match(self.tokenNames['ReservedElemento'])
+            newRoot = SyntaxTreeNode("ReservedElemento", [])
+
+            self.match(self.tokenNames['OpenPar'])
+            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
+
+            self.match(self.tokenNames['OpenBrace'])
+            newRoot.children.append(SyntaxTreeNode("OpenBrace", []))
+
+            newRoot.children.append(self.isObject())
+
+            self.match(self.tokenNames['CloseBrace'])
+            newRoot.children.append(SyntaxTreeNode("CloseBrace", []))
+
         else:
             self.abort("Problema com " + self.tokenCurrent[1] + " (" + self.tokenCurrent[0] + ")")
 
@@ -218,6 +273,119 @@ class Parser:
         
         return syntax_tree
     
+    def conteudo(self):
+        newRoot = None
+        if(self.checkToken(self.tokenNames['OpenBrace'])):
+            self.match(self.tokenNames['OpenBrace'])
+            newRoot = SyntaxTreeNode("OpenBrace", [])
+            if( self.checkToken(self.tokenNames['CloseBrace'])):
+                self.match(self.tokenNames['CloseBrace'])
+                newRoot.children.append(SyntaxTreeNode("CloseBrace", []))
+            elif(self.checkToken(self.tokenNames['OpenBracket'])):
+                self.match(self.tokenNames['OpenBracket'])
+                newRoot.children.append(SyntaxTreeNode("OpenBracket", []))
+
+                newRoot.children[0].children.append(self.isNumberOrReal())
+
+                self.match(self.tokenNames['SignalComma'])
+                newRoot.children.append(SyntaxTreeNode('SignalComma', []))
+
+                self.match(self.tokenNames['IntegerConst'])
+                newRoot.children[0].children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+        elif(self.checkToken(self.tokenNames['ReservedPos'])):
+            self.match(self.tokenNames['ReservedPos'])
+            newRoot = SyntaxTreeNode("ReservedPos", [])
+
+            self.match(self.tokenNames['OpenPar'])
+            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
+
+            newRoot.children[0].children.append(self.isNumberOrReal())
+
+            self.match(self.tokenNames['ClosePar'])
+            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+        elif(self.checkToken(self.tokenNames['ReservedElemento'])):
+            self.match(self.tokenNames['ReservedElemento'])
+            newRoot = SyntaxTreeNode("ReservedElemento", [])
+
+            self.match(self.tokenNames['OpenPar'])
+            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
+
+            self.match(self.tokenNames['OpenBrace'])
+            newRoot.children[0].children.append(SyntaxTreeNode("OpenBrace", []))
+
+            newRoot.children[0].children[0].children.append(self.isObject())
+
+            self.match(self.tokenNames['CloseBrace'])
+            newRoot.children[0].children.append(SyntaxTreeNode("CloseBrace", []))
+
+            while self.checkToken(self.tokenNames['SignalComma']):
+                self.match(self.tokenNames['SignalComma'])
+                newRoot.children[0].children.append(SyntaxTreeNode('SignalComma', []))
+                self.match(self.tokenNames['OpenBrace'])
+                newRoot.children[0].children.append(SyntaxTreeNode("OpenBrace", []))
+                newRoot.children[0].children[-1].children.append(self.isObject())
+
+                self.match(self.tokenNames['CloseBrace'])
+                newRoot.children[0].children.append(SyntaxTreeNode("CloseBrace", []))
+            
+
+            self.match(self.tokenNames['ClosePar'])
+            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+        elif(self.checkToken(self.tokenNames['ReservedQuantidade'])):
+            self.match(self.tokenNames['ReservedElemento'])
+            newRoot = SyntaxTreeNode("ReservedElemento", [])
+
+            self.match(self.tokenNames['OpenPar'])
+            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
+
+            self.match(self.tokenNames['OpenBrace'])
+            newRoot.children.append(self.isObject())
+
+            self.match(self.tokenNames['CloseBrace'])
+            while self.checkToken(self.tokenNames['SignalComma']):
+                self.match(self.tokenNames['SignalComma'])
+                newRoot.children.append(SyntaxTreeNode('SignalComma', []))
+                self.match(self.tokenNames['OpenBrace'])
+                newRoot.children.append(self.isObject())
+                self.match(self.tokenNames['CloseBrace'])
+
+            self.match(self.tokenNames['ClosePar'])
+            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+        else:
+            self.abort("Problema com " + self.tokenCurrent[1] + " (" + self.tokenCurrent[0] + ")")
+
+        return newRoot
+    def isObject(self):
+        newRoot = SyntaxTreeNode("OpenBracket", [])
+        self.match(self.tokenNames['OpenBracket'])
+        newRoot.children.append(self.isNumberOrReal())
+
+        while not self.checkToken(self.tokenNames['CloseBracket']):
+            self.match(self.tokenNames['SignalComma'])
+            newRoot.children.append(SyntaxTreeNode('SignalComma', []))
+            newRoot.children.append(self.isNumberOrReal())
+        self.match(self.tokenNames['CloseBracket'])
+
+        if(self.checkToken(self.tokenNames['SignalComma'])):
+            self.match(self.tokenNames['SignalComma'])
+            newRoot.children.append(SyntaxTreeNode('SignalComma', []))
+            newRoot.children.append(self.isObject())
+        newRoot.children.append(SyntaxTreeNode("CloseBracket", []))
+        return newRoot
+
+
+    def isNumberOrReal(self):
+        newRoot = None
+        if(self.checkToken(self.tokenNames['IntegerConst'])):
+            self.match(self.tokenNames['IntegerConst'])
+            newRoot = SyntaxTreeNode("IntegerConst", [])
+        elif(self.checkToken(self.tokenNames['DoubleConst'])):
+            self.match(self.tokenNames['DoubleConst'])
+            newRoot = SyntaxTreeNode("DoubleConst", [])
+        else:
+            self.abort("Problema com " + self.tokenCurrent[1] + " (" + self.tokenCurrent[0] + ")")
+        
+        return newRoot
     def nl(self):
         newRoot = None
         
