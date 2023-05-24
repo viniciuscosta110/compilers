@@ -44,7 +44,7 @@ class TokenClassifier:
         self.tokenIdToStr[Token.RelationLower] = "RelationLower"
         self.tokenIdToStr[Token.RelationGreaterEqual] = "RelationGreaterEqual"
         self.tokenIdToStr[Token.RelationLowerEqual] = "RelationLowerEqual"
-        self.tokenIdToStr[Token.DoubleConst] = "DoubleConst"
+        self.tokenIdToStr[Token.RealConst] = "RealConst"
         self.tokenIdToStr[Token.IntegerConst] = "IntegerConst"
         self.tokenIdToStr[Token.SignalDot] = "SignalDot"
         self.tokenIdToStr[Token.Unknown] = "Unknown"
@@ -121,8 +121,17 @@ class TokenClassifier:
             tokenType = reserved_words[token]
         except:
             tokenType = token
-        if token.isdigit():
-            token = int(token)
+
+        try:
+            if(token.find('.') != -1):
+                token = float(token)
+            else:
+                token = int(token)
+        except:
+            pass
+
+        if type(token) == int:
+            token = token
         if type(token) == int:
             return Token.IntegerConst
         elif type(token) == float:

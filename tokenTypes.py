@@ -1,6 +1,6 @@
 class Token():
     Identificator = 1,
-    DoubleConst = 2,
+    RealConst = 2,
     IntConst = 3,
     TypeInteger = 4,
     TypeReal = 5,

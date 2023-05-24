@@ -42,6 +42,9 @@ def main():
             c == '*' or c == '/' or c == '%' or c == '<' or c == '>' or c == '!' or 
             c == '&' or c == '|' or c == '?' or c == '!' or c == '`' or c == '"' or c == "'"
         ):
+            if c == '.' and word.isdigit():
+                word = word + c
+                continue
             if len(word) > 0:
                 words.append(word)
                 word = ''
