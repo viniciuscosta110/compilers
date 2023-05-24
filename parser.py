@@ -72,16 +72,26 @@ class Parser:
         while(self.posCurrent < len(self.lexerTable)-2):
             self.syntaxTree.children.append(self.statement())
 
+    """
+        <sentencas> ::= <comando> <mais_sentencas>
+        <mais_sentencas> ::= ; <cont_sentencas>
+        <cont_sentencas> ::= <sentencas> | <empty>
+    """
     def statement(self):
         syntax_tree = SyntaxTreeNode("Statement")
         newRoot = None
 
-		#   If it is the main program		,
+		#   If it is the main program
         if self.checkToken(self.tokenNames['ReservedProgram']):
             newRoot = SyntaxTreeNode("Program", [])
-            self.match(self.tokenNames['ReservedProgram'])            
+            self.match(self.tokenNames['ReservedProgram'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))   
             self.match(self.tokenNames['ReservedMain'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalSemiComma'])
+
             nlReturn = self.nl()
             if(nlReturn != None):
                 newRoot.children.append(nlReturn)
@@ -90,9 +100,12 @@ class Parser:
         elif self.checkToken(self.tokenNames['TypeInteger']):
             newRoot = SyntaxTreeNode("TypeInteger", [])
             self.match(self.tokenNames['TypeInteger'])
+
             newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+
             self.match(self.tokenNames['Identificator'])
             newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+
             while self.checkToken(self.tokenNames['SignalComma']):
                 self.match(self.tokenNames['SignalComma'])
                 newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
@@ -104,45 +117,67 @@ class Parser:
         elif self.checkToken(self.tokenNames['TypeReal']):
             newRoot = SyntaxTreeNode("TypeReal", [])
             self.match(self.tokenNames['TypeReal'])
+
             newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['Identificator'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+
+            while self.checkToken(self.tokenNames['SignalComma']):
+                self.match(self.tokenNames['SignalComma'])
+
+                newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+                self.match(self.tokenNames['Identificator'])
+
+                newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+            self.match(self.tokenNames['SignalSemiComma'])
             
         #   Is attribuition
         elif self.checkToken(self.tokenNames['Identificator']):
-            newRoot = SyntaxTreeNode("Identificator", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             newRoot.children.append(self.attribuition())
             self.match(self.tokenNames['SignalSemiComma'])
 
         #   while ( <condicao> ) do begin <sentencas> end
         elif self.checkToken(self.tokenNames['ReservedWhile']):
-            newRoot = SyntaxTreeNode("ReservedWhile", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedWhile'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['OpenPar'])
+
             newRoot.children.append(self.expression())
+            
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ClosePar'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ReservedDoBegin'])
-            newRoot.children.append(SyntaxTreeNode("ReservedDoBegin", []))
+
             while not self.checkToken(self.tokenNames['ReservedEnd']):
                 newRoot.children.append(self.statement())
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ReservedEnd'])
 
         #   if ( <condicao> ) then begin <sentencas> end <pfalsa>
         elif self.checkToken(self.tokenNames['ReservedIf']):
-            newRoot = SyntaxTreeNode("ReservedIf", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedIf'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['OpenPar'])
 
-            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
             newRoot.children[0].children.append(self.expression())
 
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ClosePar'])
 
-            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
-
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ReservedThen'])
-            self.match(self.tokenNames['ReservedBegin'])
 
-            newRoot.children.append(SyntaxTreeNode("ReservedBegin", []))
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+            self.match(self.tokenNames['ReservedBegin'])
             
             while not self.checkToken(self.tokenNames['ReservedEnd']):
                 newRoot.children.append(self.statement())
@@ -151,6 +186,7 @@ class Parser:
             newRoot.children.append(SyntaxTreeNode("ReservedEnd", []))
             
             pfalsaReturn = self.pfalsa()
+
             if pfalsaReturn != None:
                 newRoot.children.append(pfalsaReturn)
 
@@ -158,63 +194,89 @@ class Parser:
         #   <var_write> ::= <id> <mais_var_write>
         #   <mais_var_write> ::= , <var_write> | <empty>
         elif self.checkToken(self.tokenNames['ReservedWrite']):
-            newRoot = SyntaxTreeNode("ReservedWrite", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedWrite'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['OpenPar'])
+
             newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['Identificator'])
+            
             newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
 
             while self.checkToken(self.tokenNames['SignalComma']):
                 self.match(self.tokenNames['SignalComma'])
+
                 newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
                 self.match(self.tokenNames['Identificator'])
+
                 newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
 
             self.match(self.tokenNames['ClosePar'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalSemiComma'])
 
         #   <funcao> ::= function <id> <parametros> : <tipo_funcao> ; <corpo> ; <rotina>
         elif self.checkToken(self.tokenNames['DefFunction']):
-            newRoot = SyntaxTreeNode("DefFunction", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['DefFunction'])
-            self.match(self.tokenNames['Identificator'])
-            self.match(self.tokenNames['OpenPar'])
+            
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['Identificator'])
 
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+            self.match(self.tokenNames['OpenPar'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
+            self.match(self.tokenNames['Identificator'])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             while self.checkToken(self.tokenNames['SignalComma']):
                 self.match(self.tokenNames['SignalComma'])
+
+                newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
                 self.match(self.tokenNames['Identificator'])
+
+                newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             
             self.match(self.tokenNames['SignalTwoPoints'])
-            self.primary()
+            
+            newRoot.children.append(self.primary())
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ClosePar'])
 
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalTwoPoints'])
-            self.primary()
+
+            newRoot.children.append(self.primary())
             
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalSemiComma'])
+
+            newRoot.children.append(self.statement())
 
         #   reserved begin <sentencas> end
         elif self.checkToken(self.tokenNames['ReservedBegin']):
-            newRoot = SyntaxTreeNode("ReservedBegin", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedBegin'])
 
             while not self.checkToken(self.tokenNames['ReservedEnd']):
                 newRoot.children.append(self.statement())
+
             self.match(self.tokenNames['ReservedEnd'])
             pfalsaReturn = self.pfalsa()
+
             if pfalsaReturn != None:
                 newRoot.children.append(pfalsaReturn)
 
         #<expressao_bag> ::= <opBag1>(<conteudo> , <conteudo>) | pos(<integer_num>) | <opBag2>(<conteudo>)
-        #<conteudo> ::= {} | {[<integer_num>,<integer_num>]<conteudo_integer_cont>} | {[<real_num>,<integer_num>]<conteudo_real_cont>}
-        #<conteudo_integer_cont> ::= ,[<integer_num>,<integer_num>]<conteudo_integer_cont>|<empty>
-        #<conteudo_real_cont> ::= ,[<real_num>,<integer_num>]<conteudo_real_cont>|<empty>
         #<opBag1> ::= U | ∩
         #<opBag2> ::= elemento | quantidade
         elif self.checkToken(self.tokenNames['ReservedUnion']):
-            newRoot = SyntaxTreeNode("ReservedUnion", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedUnion'])
 
             self.match(self.tokenNames['OpenPar'])
@@ -227,28 +289,35 @@ class Parser:
 
             newRoot.children[0].children.append(self.conteudo())
 
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ClosePar'])
-            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalSemiComma'])
+
         elif self.checkToken(self.tokenNames['ReservedInterception']):
-            newRoot = SyntaxTreeNode("ReservedInterception", [])
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedInterception'])
 
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['OpenPar'])
-            newRoot.children.append(SyntaxTreeNode("OpenPar", []))
 
             newRoot.children[0].children.append(self.conteudo())
 
+            newRoot.children[0].children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalComma'])
-            newRoot.children[0].children.append(SyntaxTreeNode('SignalComma', []))
 
             newRoot.children[0].children.append(self.conteudo())
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ClosePar'])
-            newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['SignalSemiComma'])
+
         elif self.checkToken(self.tokenNames['ReservedElemento']):
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedElemento'])
-            newRoot = SyntaxTreeNode("ReservedElemento", [])
 
             self.match(self.tokenNames['OpenPar'])
             newRoot.children.append(SyntaxTreeNode("OpenPar", []))
@@ -262,6 +331,11 @@ class Parser:
             newRoot.children.append(SyntaxTreeNode("CloseBrace", []))
 
         else:
+            if(self.checkToken(self.tokenNames['EndLine'])):
+                self.match(self.tokenNames['EndLine'])
+                newRoot = SyntaxTreeNode("EndLine", [])
+                return newRoot
+
             self.abort("Problema com " + self.tokenCurrent[1] + " (" + self.tokenCurrent[0] + ")")
 
         if newRoot:
@@ -273,14 +347,22 @@ class Parser:
         
         return syntax_tree
     
+    """ 
+        <conteudo> ::= {} | {[<integer_num>,<integer_num>]<conteudo_integer_cont>} | {[<real_num>,<integer_num>]<conteudo_real_cont>}
+        <conteudo_integer_cont> ::= ,[<integer_num>,<integer_num>]<conteudo_integer_cont>|<empty>
+        <conteudo_real_cont> ::= ,[<real_num>,<integer_num>]<conteudo_real_cont>|<empty>
+    """
     def conteudo(self):
         newRoot = None
+
         if(self.checkToken(self.tokenNames['OpenBrace'])):
             self.match(self.tokenNames['OpenBrace'])
             newRoot = SyntaxTreeNode("OpenBrace", [])
+
             if( self.checkToken(self.tokenNames['CloseBrace'])):
                 self.match(self.tokenNames['CloseBrace'])
                 newRoot.children.append(SyntaxTreeNode("CloseBrace", []))
+
             elif(self.checkToken(self.tokenNames['OpenBracket'])):
                 self.match(self.tokenNames['OpenBracket'])
                 newRoot.children.append(SyntaxTreeNode("OpenBracket", []))
@@ -327,10 +409,10 @@ class Parser:
 
                 self.match(self.tokenNames['CloseBrace'])
                 newRoot.children[0].children.append(SyntaxTreeNode("CloseBrace", []))
-            
 
             self.match(self.tokenNames['ClosePar'])
             newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+
         elif(self.checkToken(self.tokenNames['ReservedQuantidade'])):
             self.match(self.tokenNames['ReservedElemento'])
             newRoot = SyntaxTreeNode("ReservedElemento", [])
@@ -351,6 +433,7 @@ class Parser:
 
             self.match(self.tokenNames['ClosePar'])
             newRoot.children.append(SyntaxTreeNode("ClosePar", []))
+
         else:
             self.abort("Problema com " + self.tokenCurrent[1] + " (" + self.tokenCurrent[0] + ")")
 
@@ -358,6 +441,7 @@ class Parser:
     def isObject(self):
         newRoot = SyntaxTreeNode("OpenBracket", [])
         self.match(self.tokenNames['OpenBracket'])
+        
         newRoot.children.append(self.isNumberOrReal())
 
         while not self.checkToken(self.tokenNames['CloseBracket']):
@@ -371,111 +455,122 @@ class Parser:
             newRoot.children.append(SyntaxTreeNode('SignalComma', []))
             newRoot.children.append(self.isObject())
         newRoot.children.append(SyntaxTreeNode("CloseBracket", []))
+
         return newRoot
 
 
     def isNumberOrReal(self):
         newRoot = None
+
         if(self.checkToken(self.tokenNames['IntegerConst'])):
             self.match(self.tokenNames['IntegerConst'])
             newRoot = SyntaxTreeNode("IntegerConst", [])
-        elif(self.checkToken(self.tokenNames['DoubleConst'])):
-            self.match(self.tokenNames['DoubleConst'])
-            newRoot = SyntaxTreeNode("DoubleConst", [])
+        elif(self.checkToken(self.tokenNames['RealConst'])):
+            self.match(self.tokenNames['RealConst'])
+            newRoot = SyntaxTreeNode("RealConst", [])
         else:
             self.abort("Problema com " + self.tokenCurrent[1] + " (" + self.tokenCurrent[0] + ")")
         
         return newRoot
+
+
     def nl(self):
         newRoot = None
         
         if(not self.checkToken(self.tokenNames['EndLine'])):
             if self.checkToken(self.tokenNames['ReservedEnd']):
+                newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
                 self.match(self.tokenNames['ReservedEnd'])
-                newRoot = SyntaxTreeNode("ReservedEnd", [])
-        else: 
+        else:
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['EndLine'])
-            newRoot = SyntaxTreeNode("EndLine", [])
+
             while self.checkToken(self.tokenNames['EndLine']):
                 self.match(self.tokenNames['EndLine'])
 
         return newRoot
         
-
+    #<pfalsa> ::= else begin <sentencas> end | <empty>
     def pfalsa(self):
         newRoot = None
 
         if self.checkToken(self.tokenNames['ReservedElse']):
+            newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
             self.match(self.tokenNames['ReservedElse'])
-            newRoot = SyntaxTreeNode("ReservedElse", [])
+
+            newRoot.children.append(SyntaxTreeNode(self.tokenCurrent[0], []))
             self.match(self.tokenNames['ReservedBegin'])
-            newRoot.children.append(SyntaxTreeNode("ReservedBegin", []))
             while not self.checkToken(self.tokenNames['ReservedEnd']):
                 newRoot.children.append(self.statement())
             newRoot.children.append(SyntaxTreeNode("ReservedEnd", []))
+
         return newRoot
             
     # expression ::== equality
     def attribuition(self):
         newRoot = SyntaxTreeNode("Attribuition", [])
         newRoot.children.append(self.primary())
+
         self.match(self.tokenNames['SignalAtribution'])
         newRoot.children.append(self.expression())
         return newRoot
-        
+    
+    # <expressao> ::= <expressao_num> | <expressao_bag>
     def expression(self):
-        syntax_tree = SyntaxTreeNode("Expression", [])
+        newRoot = SyntaxTreeNode("Expression", [])
         self.equality()
-        return syntax_tree
+        return newRoot
+
     # equality
     def equality(self):
         self.comparison()
         while self.checkToken(self.tokenNames['RelationEqual']) or  self.checkToken(self.tokenNames['RelationNotEqual']):
             self.nextToken()
             self.comparison()
-    # comparison
+
+    # <relacao> ::= = | > | < | >= | <= | <>
     def comparison(self):
         self.term()
         while self.checkToken(self.tokenNames['RelationLower']) or self.checkToken(self.tokenNames['RelationLowerEqual']) or self.checkToken(self.tokenNames['RelationGreater']) or self.checkToken(self.tokenNames['RelationGreaterEqual']) or self.checkToken(self.tokenNames['RelationEqual']) or self.checkToken(self.tokenNames['RelationNotEqual']):
             self.nextToken()
             self.term()
+
+    # <operador> ::= + | - | * | / | //
     def term(self):
         self.factor()
         while self.checkToken(self.tokenNames['OperationSub']) or self.checkToken(self.tokenNames['OperationSum']):
             self.nextToken()
             self.factor()
     def factor(self):
-        self.unary()
+        self.signedElement()
         while self.checkToken(self.tokenNames['OperationMult']) or self.checkToken(self.tokenNames['OperationDiv']):
             self.nextToken()
-            self.unary()
-    def unary(self):
+            self.signedElement()
+    
+    # <integer_num> ::= +<num> | -<num> | <num> | 0
+    # <real_num> ::= +<num>.<num> | - <num>.<num> | +0.<num> | -0.<num> | <num>.<num> | 0.<num>
+    def signedElement(self):
         if self.checkToken(self.tokenNames['OperationSub']) or self.checkToken(self.tokenNames['OperationSum']):
             self.nextToken()
-            self.unary()
+            self.signedElement()
         else:
             self.primary()
 
     def primary(self):
-        newRoot = None
+        newRoot = SyntaxTreeNode(self.tokenCurrent[0], [])
+        
         if self.checkToken(self.tokenNames['TypeInteger']):
             self.match(self.tokenNames['TypeInteger'])
-            newRoot = SyntaxTreeNode("TypeInteger", [])
         elif self.checkToken(self.tokenNames['TypeReal']):
             self.match(self.tokenNames['TypeReal'])
-            newRoot = SyntaxTreeNode("TypeReal", [])
-        elif self.checkToken(self.tokenNames['DoubleConst']):
-            self.match(self.tokenNames['DoubleConst'])
-            newRoot = SyntaxTreeNode("DoubleConst", [])
+        elif self.checkToken(self.tokenNames['RealConst']):
+            self.match(self.tokenNames['RealConst'])
         elif self.checkToken(self.tokenNames['Identificator']):
             self.match(self.tokenNames['Identificator'])
-            newRoot = SyntaxTreeNode("Identificator", [])
         elif self.checkToken(self.tokenNames['IntegerConst']):
             self.match(self.tokenNames['IntegerConst'])
-            newRoot = SyntaxTreeNode("IntegerConst", [])
         elif self.checkToken(self.tokenNames['TypeBag']):
             self.match(self.tokenNames['TypeBag'])
-            newRoot = SyntaxTreeNode("TypeBag", [])
         else:
             self.abort("Token inesperado, esperava por NUMERO ou IDENTIFICADOR, apareceu: " + self.tokenCurrent[0] + " (" + self.tokenCurrent[1] + ")")
 

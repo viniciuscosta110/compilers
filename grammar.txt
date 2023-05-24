@@ -51,7 +51,7 @@
 <num> ::= <digit><num_cont>
 <num_cont> ::= <digito><num_cont> |<empty>
 <integer_num> ::= +<num> | -<num> | <num> | 0
-<real_num> ::= +<num>,<num> | - <num>,<num> | +0,<num> | -0,<num> | <num>,<num> | 0,<num>
+<real_num> ::= +<num>.<num> | - <num>.<num> | +0.<num> | -0.<num> | <num>.<num> | 0.<num>
 <letra> ::= a | b |...| z
 <digito> ::= 0|1|...|9
 <digit> ::= 1|...|9
