@@ -1,6 +1,6 @@
 class Token():
     Identificator = 1,
-    DoubleConst = 2,
+    RealConst = 2,
     IntConst = 3,
     TypeInteger = 4,
     TypeReal = 5,
@@ -47,7 +47,7 @@ class Token():
     CloseBrace = 46,
     OpenPar = 47,
     ClosePar = 48,
-    ResevedUnion = 49,
+    ReservedUnion = 49,
     ReservedInterception = 50,
     SignalDot = 51,
     SignalComma = 52,
@@ -56,4 +56,7 @@ class Token():
     SignalAtribution = 55,
     EndLine = 56,
     Unknown = 57,
-    qtdTokens = 58
+    qtdTokens = 58,
+    IntegerConst = 59,
+    ReservedQuantidade = 61,
+    ReservedElemento = 62,

@@ -1,13 +1,39 @@
 program main;
+
 begin
+    function gcd(a, b: integer): integer;
+
+    begin
+        if (b = 0) then begin
+            gcd ::= a;
+        end else begin
+            gcd ::= b;
+        end
+    end
+
+    n(pos(2), elemento({[1,2]}, {[3,4], [5,6]}));
+    
     integer a, b, c;
+
+    real d, e, f;
+
     a ::= 10;
     b ::= 20;
     c ::= a + b;
-    write ( a, b, c);
+
+    d ::= 10.0;
+    e ::= 20.0;
+    f ::= d + e;
+    
+    write (a, b, c);
+    
     if (a > b) then begin
-        a ::= b;   
+        a ::= b;
     end else begin
         b ::= a;
+    end
+
+    while (a > 0) do begin
+        a ::= a - 1;
     end
 end

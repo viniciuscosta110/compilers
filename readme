@@ -1,0 +1,14 @@
+# Compiler of a custom language
+
+## Description
+This is a compiler of a custom language. Made with Python.
+
+## How to use
+1. Clone the repository
+2. Write the code in the input.txt file, using the custom grammar
+3. Run the main.py file
+4. The output will be in the terminal
+
+## Features
+- [x] Lexer
+- [x] Parser (Half done, it doesn't work with all the grammar and it doesn't build the entire AST)

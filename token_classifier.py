@@ -1,5 +1,5 @@
 #include <unordered_map>
-from token import Token
+from tokenTypes import Token
 
 class TokenClassifier:
     tokenIdToStr = {}
@@ -32,7 +32,7 @@ class TokenClassifier:
         self.tokenIdToStr[Token.ReservedWrite] = "ReservedWrite"
         self.tokenIdToStr[Token.ReservedRead] = "ReservedRead"
         self.tokenIdToStr[Token.SignalComma] = "SignalComma"
-        self.tokenIdToStr[Token.OperationSum] = "OperationAdd"
+        self.tokenIdToStr[Token.OperationSum] = "OperationSum"
         self.tokenIdToStr[Token.OperationSub] = "OperationSub"
         self.tokenIdToStr[Token.OperationMult] = "OperationMult"
         self.tokenIdToStr[Token.OperationDiv] = "OperationDiv"
@@ -44,8 +44,8 @@ class TokenClassifier:
         self.tokenIdToStr[Token.RelationLower] = "RelationLower"
         self.tokenIdToStr[Token.RelationGreaterEqual] = "RelationGreaterEqual"
         self.tokenIdToStr[Token.RelationLowerEqual] = "RelationLowerEqual"
-        self.tokenIdToStr[Token.DoubleConst] = "RealConst"
-        self.tokenIdToStr[Token.IntConst] = "IntegerConst"
+        self.tokenIdToStr[Token.RealConst] = "RealConst"
+        self.tokenIdToStr[Token.IntegerConst] = "IntegerConst"
         self.tokenIdToStr[Token.SignalDot] = "SignalDot"
         self.tokenIdToStr[Token.Unknown] = "Unknown"
         self.tokenIdToStr[Token.SignalSemiComma] = "SignalSemiComma"
@@ -53,6 +53,12 @@ class TokenClassifier:
         self.tokenIdToStr[Token.LogicAnd] = "LogicAnd"
         self.tokenIdToStr[Token.LogicOr] = "LogicOr"
         self.tokenIdToStr[Token.LogicNot] = "LogicNot"
+        self.tokenIdToStr[Token.ReservedDoBegin] = "ReservedDoBegin"
+        self.tokenIdToStr[Token.ReservedInterception] = "ReservedInterception"
+        self.tokenIdToStr[Token.ReservedUnion] = "ReservedUnion"
+        self.tokenIdToStr[Token.ReservedPos] = "ReservedPos"
+        self.tokenIdToStr[Token.ReservedElemento] = "ReservedElemento"
+        self.tokenIdToStr[Token.ReservedQuantidade] = "ReservedQuantidade"
 	
     def getToken(self, token):
         return self.tokenIdToStr[token]
@@ -79,6 +85,10 @@ class TokenClassifier:
             "then": Token.ReservedThen,
             "begin": Token.ReservedBegin,
             "end": Token.ReservedEnd,
+            "do": Token.ReservedDoBegin,
+            "pos": Token.ReservedPos,
+            "elemento": Token.ReservedElemento,
+            "quantidade": Token.ReservedQuantidade,
             "+": Token.OperationSum,
 			"-": Token.OperationSub,
 			"/": Token.OperationDiv,
@@ -100,21 +110,32 @@ class TokenClassifier:
             "}": Token.CloseBrace,
             "[": Token.OpenBracket,
             "]": Token.CloseBracket,
+            "U": Token.ReservedUnion,
+            "n": Token.ReservedInterception,
             "\n": Token.EndLine,
         }
 
         tokenType = ''
+
         try:
             tokenType = reserved_words[token]
         except:
             tokenType = token
-        if token.isdigit():
-            token = int(token)
+
+        try:
+            if(token.find('.') != -1):
+                token = float(token)
+            else:
+                token = int(token)
+        except:
+            pass
+
         if type(token) == int:
-            return Token.IntConst
+            token = token
+        if type(token) == int:
+            return Token.IntegerConst
         elif type(token) == float:
             return Token.RealConst
-        
         if token == tokenType:
             return Token.Identificator if not token[0].isdigit() and not self.haveSpecialCharacterAtFirstPositin(token[0]) else 'Caracter Inicial Inválido'
             
